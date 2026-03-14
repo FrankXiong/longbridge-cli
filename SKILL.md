@@ -1,14 +1,22 @@
 ---
-name: longbridge-cli
-description: 长桥 OpenAPI CLI 工具。查询行情、账户持仓、管理订单、获取市场数据。当用户要求查看长桥账户余额、持仓、下单、撤单、查行情、K线、盘口、资金流向、市场温度时使用此 skill。
-metadata: {"clawdbot":{"emoji":"📊","os":["darwin","linux"],"requires":{"bins":["python3"]}}}
+name: longbridge
+version: 1.0.1
+description: |
+  长桥 LongPort OpenAPI CLI 工具，提供股票行情查询、账户持仓、订单管理、市场数据四大功能。
+  当用户提到"长桥"、"LongPort"、"longbridge"，或要求查看股票报价、实时行情、K线、盘口、
+  逐笔成交、账户余额、持仓、基金持仓、下单、买入、卖出、撤单、今日订单、历史订单、
+  资金流向、资金分布、市场温度、期权链时，使用此 skill。即使用户只是随口问"看看苹果股价"、
+  "我的持仓怎么样"、"帮我下个单"，也应触发此 skill。
+metadata: {"clawdbot":{"emoji":"📊","os":["darwin","linux"],"requires":{"bins":["python3","uv"],"env":["LONGBRIDGE_APP_KEY","LONGBRIDGE_APP_SECRET","LONGBRIDGE_ACCESS_TOKEN"]}}}
 ---
 
 # 长桥 OpenAPI CLI 工具
 
-通过长桥 OpenAPI 提供行情查询、账户持仓、订单管理、市场数据四大功能模块。
+通过 `longbridge` CLI 命令调用长桥 OpenAPI，覆盖行情查询、账户持仓、订单管理、市场数据四大模块。
 
-## 环境准备
+## 前置条件
+
+### 环境变量
 
 需设置以下环境变量（可在 `~/.zshrc` 或 `~/.bashrc` 中配置）：
 
@@ -18,27 +26,25 @@ export LONGBRIDGE_APP_SECRET="your_app_secret"
 export LONGBRIDGE_ACCESS_TOKEN="your_access_token"
 
 # 可选：开启交易权限（默认只读，禁止 buy/sell/cancel）
-export LONGBRIDGE_TRADE_ENABLED=true
+# export LONGBRIDGE_TRADE_ENABLED=false
 ```
 
-## 安装
+### 安装
 
-**首先检测是否已安装**：
+先检测是否已安装：
 
 ```bash
 which longbridge
 ```
 
-- 若输出路径（如 `/Users/xxx/.local/bin/longbridge`），说明已安装，**跳过以下安装步骤**，直接使用命令。
-- 若输出 `longbridge not found`，则按以下步骤安装：
+- 若输出路径（如 `/Users/xxx/.local/bin/longbridge`），说明已安装，跳过安装步骤。
+- 若未找到，从本 skill 目录安装（`SKILL_DIR` 为本文件所在目录）：
 
 ```bash
-git clone git@github.com:FrankXiong/longbridge-cli.git
-cd longbridge-cli
-uv tool install .
+uv tool install "$SKILL_DIR"
 ```
 
-安装完成后验证：
+验证安装：
 
 ```bash
 longbridge --help

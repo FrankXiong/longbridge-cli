@@ -1,4 +1,4 @@
-# longbridge-cli
+# longbridge
 
 English | [中文](#中文)
 
@@ -16,30 +16,6 @@ A command-line tool built on the [LongPort OpenAPI](https://open.longportapp.com
 - **Account**: Balance & net assets, stock positions, fund positions
 - **Orders**: Today's / historical orders (read-only); limit buy/sell, cancel (requires trade permission)
 - **Market**: Market temperature, capital flow, capital distribution, option chain
-
----
-
-### Installation
-
-#### Option 1: uv tool (recommended)
-
-```bash
-cd longbridge-cli
-uv tool install .
-longbridge --help
-```
-
-Uninstall: `uv tool uninstall longbridge-cli`
-
-#### Option 2: Source install
-
-```bash
-git clone git@github.com:FrankXiong/longbridge-cli.git
-cd longbridge-cli
-python3 -m venv .venv
-.venv/bin/pip install -e .
-.venv/bin/longbridge --help
-```
 
 ---
 
@@ -238,7 +214,7 @@ longbridge-cli/
 │       ├── order.py         # Order management
 │       └── market.py        # Market data
 ├── SKILL.md                 # Claude Code Skill document
-├── .clawdhub/origin.json    # Skill registration
+├── _meta.json               # Skill registration
 ├── LICENSE
 ├── requirements.txt
 └── pyproject.toml
@@ -284,30 +260,6 @@ MIT
 - **账户**：余额净资产、股票持仓、基金持仓
 - **订单**：今日/历史订单查询（只读）；限价买入/卖出、撤单（需开启交易权限）
 - **市场**：市场温度、资金流向、资金分布、期权链
-
----
-
-### 安装
-
-#### 方式 1：uv tool 全局安装（推荐）
-
-```bash
-cd longbridge-cli
-uv tool install .
-longbridge --help
-```
-
-卸载：`uv tool uninstall longbridge-cli`
-
-#### 方式 2：源码安装
-
-```bash
-git clone git@github.com:FrankXiong/longbridge-cli.git
-cd longbridge-cli
-python3 -m venv .venv
-.venv/bin/pip install -e .
-.venv/bin/longbridge --help
-```
 
 ---
 
@@ -505,7 +457,7 @@ longbridge-cli/
 │       ├── order.py         # 订单管理
 │       └── market.py        # 市场数据
 ├── SKILL.md                 # Claude Code Skill 文档
-├── .clawdhub/origin.json    # Skill 注册信息
+├── _meta.json               # Skill 注册信息
 ├── LICENSE
 ├── requirements.txt
 └── pyproject.toml
