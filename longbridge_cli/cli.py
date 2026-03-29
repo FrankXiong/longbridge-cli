@@ -26,7 +26,9 @@ from longbridge_cli.commands.market import (
 
 @click.group()
 @click.version_option("1.0.0", prog_name="longbridge")
-def cli():
+@click.option("--profile", default=None, help="账户 profile（如 paper），加载 .{profile}.env 凭证文件")
+@click.pass_context
+def cli(ctx, profile):
     """长桥 LongPort OpenAPI CLI 工具
 
     \b
@@ -37,6 +39,8 @@ def cli():
 
     所有命令支持 --json 输出 JSON 格式。
     """
+    ctx.ensure_object(dict)
+    ctx.obj["profile"] = profile
 
 
 # 行情

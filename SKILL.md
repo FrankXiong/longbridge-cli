@@ -1,6 +1,6 @@
 ---
 name: longbridge
-version: 1.0.1
+version: 1.0.2
 description: |
   长桥 LongPort OpenAPI CLI 工具，提供股票行情查询、账户持仓、订单管理、市场数据四大功能。
   当用户提到"长桥"、"LongPort"、"longbridge"，或要求查看股票报价、实时行情、K线、盘口、
@@ -27,6 +27,15 @@ export LONGBRIDGE_ACCESS_TOKEN="your_access_token"
 
 # 可选：开启交易权限（默认只读，禁止 buy/sell/cancel）
 # export LONGBRIDGE_TRADE_ENABLED=false
+```
+
+也可以在当前目录或主目录创建 `.env` 文件（系统环境变量优先级更高，不会被 `.env` 覆盖）。
+
+多账户切换：使用 `--profile <名称>` 加载 `.<名称>.env` 文件，例如：
+
+```bash
+longbridge --profile paper balance   # 加载 .paper.env
+longbridge --profile live positions  # 加载 .live.env
 ```
 
 ### 安装
@@ -108,6 +117,10 @@ longbridge sell 700.HK --qty 500 --price 320.0
 
 # 撤销订单（会有确认提示）
 longbridge cancel 701234567890
+
+# 跳过确认提示（AI Agent 程序化调用时推荐加 --yes）
+longbridge buy AAPL.US --qty 100 --price 180.0 --yes
+longbridge sell 700.HK --qty 500 --price 320.0 -y
 ```
 
 ### 市场数据模块
@@ -129,7 +142,7 @@ longbridge option-chain AAPL.US
 
 ## 注意事项
 
-- **下单/撤单命令**：`buy`、`sell`、`cancel` 均有确认提示，确认后才会执行，防止误操作
+- **下单/撤单命令**：`buy`、`sell`、`cancel` 均有确认提示，确认后才会执行，防止误操作。AI Agent 程序化调用时请加 `--yes` 或 `-y` 跳过确认
 - **港股代码格式**：使用 4 位 + `.HK` 后缀，如 `0700.HK`、`9988.HK`
 - **美股代码格式**：使用股票代码 + `.US` 后缀，如 `AAPL.US`、`NVDA.US`
 - **JSON 输出**：所有命令加 `--json` 可输出机器可读的 JSON 格式，便于 AI 解析

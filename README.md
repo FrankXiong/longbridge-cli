@@ -36,7 +36,21 @@ LONGBRIDGE_ACCESS_TOKEN=your_access_token
 LONGBRIDGE_TRADE_ENABLED=true
 ```
 
-Search order: **current directory** → **home directory**. Values in `.env` override system environment variables.
+Search order: **current directory** → **home directory**. Values in `.env` do **not** override existing system environment variables (system env takes precedence).
+
+#### Method 3: Multiple accounts with `--profile`
+
+Use named profile files to switch between accounts (e.g., paper trading vs live):
+
+```bash
+# Create .paper.env and .live.env in the current or home directory
+# Each file contains the credentials for that account
+
+longbridge --profile paper balance
+longbridge --profile live positions
+```
+
+The `--profile paper` flag loads `.paper.env` instead of `.env`. If the file is not found, an error is raised.
 
 #### Method 2: Shell environment variables
 
@@ -126,6 +140,10 @@ longbridge sell 700.HK --qty 500 --price 320.0
 
 # Cancel order (confirmation prompt)
 longbridge cancel 701234567890
+
+# Skip confirmation for programmatic / scripted use
+longbridge buy AAPL.US --qty 100 --price 180.0 --yes
+longbridge sell 700.HK --qty 500 --price 320.0 -y
 ```
 
 #### Market Data
@@ -235,10 +253,12 @@ rich>=13.0   # Terminal output formatting
 ### Notes
 
 - **Read-only mode**: `buy`/`sell`/`cancel` require `LONGBRIDGE_TRADE_ENABLED=true`
-- **Trade confirmation**: Even with trade permission enabled, all write commands prompt for confirmation before executing
+- **Trade confirmation**: Even with trade permission enabled, all write commands prompt for confirmation before executing. Use `--yes` / `-y` to skip the prompt for scripted or programmatic use
+- **Multi-account profiles**: Use `longbridge --profile <name>` to load `.<name>.env` credentials (e.g., `--profile paper` loads `.paper.env`). Useful for switching between paper trading and live accounts
 - **HK symbol format**: Must use 4-digit format, e.g. `0700.HK` (leading zero required)
 - **Error handling**: SDK exceptions are caught and displayed as friendly messages
 - **Decimal serialization**: Decimal values are automatically converted to float in JSON output
+- **.env precedence**: System environment variables take precedence over `.env` file values (system env is not overwritten)
 
 ---
 
@@ -280,7 +300,21 @@ LONGBRIDGE_ACCESS_TOKEN=your_access_token
 LONGBRIDGE_TRADE_ENABLED=true
 ```
 
-查找顺序：**当前工作目录** → **用户主目录**，`.env` 中的值会覆盖系统环境变量。
+查找顺序：**当前工作目录** → **用户主目录**，`.env` 中的值**不会**覆盖已有的系统环境变量（系统环境变量优先）。
+
+#### 方式 3：多账户 `--profile` 切换
+
+使用具名 profile 文件切换账户（如模拟盘与实盘）：
+
+```bash
+# 在当前目录或主目录分别创建 .paper.env 和 .live.env
+# 每个文件填写对应账户的凭证
+
+longbridge --profile paper balance
+longbridge --profile live positions
+```
+
+`--profile paper` 会加载 `.paper.env` 而不是 `.env`。若文件不存在则报错。
 
 #### 方式 2：Shell 环境变量
 
@@ -369,6 +403,10 @@ longbridge sell 700.HK --qty 500 --price 320.0
 
 # 撤销订单（执行前有确认提示）
 longbridge cancel 701234567890
+
+# 跳过确认提示（程序化/脚本调用时使用）
+longbridge buy AAPL.US --qty 100 --price 180.0 --yes
+longbridge sell 700.HK --qty 500 --price 320.0 -y
 ```
 
 #### 市场数据
@@ -478,10 +516,12 @@ rich>=13.0   # 终端美化输出
 ### 注意事项
 
 - **只读模式**：默认禁止 `buy`/`sell`/`cancel`，需设置 `LONGBRIDGE_TRADE_ENABLED=true` 才能下单
-- **下单/撤单**：开启交易权限后，执行前仍有二次确认提示，防止误操作
+- **下单/撤单**：开启交易权限后，执行前仍有二次确认提示，防止误操作。脚本/程序化调用可加 `--yes` 或 `-y` 跳过确认
+- **多账户切换**：使用 `longbridge --profile <名称>` 加载 `.<名称>.env` 凭证文件（如 `--profile paper` 加载 `.paper.env`），方便在模拟盘与实盘之间切换
 - **港股代码**：必须使用 4 位格式，如 `0700.HK`（不能省略前导零）
 - **错误处理**：SDK 异常会转换为友好提示，不暴露原始堆栈
 - **Decimal 序列化**：JSON 输出中 Decimal 类型自动转为 float
+- **.env 优先级**：系统环境变量优先级高于 `.env` 文件，已存在的环境变量不会被 `.env` 覆盖
 
 ---
 

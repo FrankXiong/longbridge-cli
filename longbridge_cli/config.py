@@ -6,29 +6,45 @@ import click
 from longbridge.openapi import Config
 
 
-def _load_dotenv() -> None:
-    """从 .env 文件加载环境变量（会覆盖已有的系统环境变量）。
+# ---------------------------------------------------------------------------
+# .env 加载（CLI 包自包含，不依赖 trader 包）
+# ---------------------------------------------------------------------------
 
-    查找顺序：当前工作目录 → 用户主目录。
+def _load_dotenv_for_profile(profile: str | None = None) -> None:
+    """Load .env (or .{profile}.env) into os.environ.
+
+    查找顺序: cwd → home dir。
+    profile=None + 文件不存在 → 静默跳过（向后兼容）。
+    profile 非空 + 文件不存在 → 抛 FileNotFoundError。
+    已存在的环境变量不会被覆盖。
     """
-    candidates = [Path.cwd() / ".env", Path.home() / ".env"]
-    for dotenv_path in candidates:
-        if not dotenv_path.is_file():
-            continue
-        with dotenv_path.open(encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line or line.startswith("#") or "=" not in line:
-                    continue
-                key, _, value = line.partition("=")
-                key = key.strip()
-                value = value.strip().strip('"').strip("'")
-                if key:
-                    os.environ[key] = value
-        break  # 找到第一个就停止
+    filename = f".{profile}.env" if profile else ".env"
+    env_path: Path | None = None
+    for base in [Path.cwd(), Path.home()]:
+        candidate = base / filename
+        if candidate.is_file():
+            env_path = candidate
+            break
 
+    if env_path is None:
+        if profile is not None:
+            raise FileNotFoundError(
+                f"Profile '{profile}' 的 env 文件未找到。"
+                f"请在当前目录或主目录创建 {filename}"
+            )
+        return
 
-_load_dotenv()
+    with open(env_path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, value = line.partition("=")
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            if key and key not in os.environ:
+                os.environ[key] = value
+
 
 # 下单权限控制：设置 LONGBRIDGE_TRADE_ENABLED=true 才允许 buy/sell/cancel
 _TRADE_ENV_VAR = "LONGBRIDGE_TRADE_ENABLED"
@@ -50,14 +66,15 @@ def require_trade_enabled() -> None:
         )
 
 
-def get_config() -> Config:
-    """从环境变量初始化长桥配置。
+def get_config(profile: str | None = None) -> Config:
+    """从环境变量初始化长桥配置。支持 --profile 切换账户。
 
     需要设置以下环境变量：
         LONGBRIDGE_APP_KEY
         LONGBRIDGE_APP_SECRET
         LONGBRIDGE_ACCESS_TOKEN
     """
+    _load_dotenv_for_profile(profile)
     try:
         return Config.from_apikey_env()
     except Exception as e:

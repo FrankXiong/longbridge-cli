@@ -22,14 +22,15 @@ PERIOD_MAP = {
 @click.command("quote")
 @click.argument("symbols", nargs=-1, required=True)
 @click.option("--json", "output_json", is_flag=True, help="以 JSON 格式输出")
-def quote_cmd(symbols, output_json):
+@click.pass_context
+def quote_cmd(ctx, symbols, output_json):
     """获取实时报价（支持多个标的）
 
     示例：longbridge quote AAPL.US 700.HK
     """
     try:
-        ctx = QuoteContext(get_config())
-        resp = ctx.quote(list(symbols))
+        quote_ctx = QuoteContext(get_config(ctx.obj.get("profile")))
+        resp = quote_ctx.quote(list(symbols))
     except Exception as e:
         print_error(str(e))
 
@@ -71,14 +72,15 @@ def quote_cmd(symbols, output_json):
 @click.command("depth")
 @click.argument("symbol")
 @click.option("--json", "output_json", is_flag=True, help="以 JSON 格式输出")
-def depth_cmd(symbol, output_json):
+@click.pass_context
+def depth_cmd(ctx, symbol, output_json):
     """查看盘口（买5卖5）
 
     示例：longbridge depth 700.HK
     """
     try:
-        ctx = QuoteContext(get_config())
-        resp = ctx.depth(symbol)
+        quote_ctx = QuoteContext(get_config(ctx.obj.get("profile")))
+        resp = quote_ctx.depth(symbol)
     except Exception as e:
         print_error(str(e))
 
@@ -103,14 +105,15 @@ def depth_cmd(symbol, output_json):
 @click.argument("symbol")
 @click.option("--count", default=20, show_default=True, help="返回条数（最多 1000）")
 @click.option("--json", "output_json", is_flag=True, help="以 JSON 格式输出")
-def trades_cmd(symbol, count, output_json):
+@click.pass_context
+def trades_cmd(ctx, symbol, count, output_json):
     """查看最近逐笔成交
 
     示例：longbridge trades 700.HK --count 20
     """
     try:
-        ctx = QuoteContext(get_config())
-        resp = ctx.trades(symbol, count)
+        quote_ctx = QuoteContext(get_config(ctx.obj.get("profile")))
+        resp = quote_ctx.trades(symbol, count)
     except Exception as e:
         print_error(str(e))
 
@@ -144,7 +147,8 @@ def trades_cmd(symbol, count, output_json):
 @click.argument("period", type=click.Choice(list(PERIOD_MAP.keys())))
 @click.option("--count", default=30, show_default=True, help="返回K线条数（最多 1000）")
 @click.option("--json", "output_json", is_flag=True, help="以 JSON 格式输出")
-def candlesticks_cmd(symbol, period, count, output_json):
+@click.pass_context
+def candlesticks_cmd(ctx, symbol, period, count, output_json):
     """查看 K 线数据
 
     PERIOD 可选：1m 5m 15m 30m 60m day week month quarter year
@@ -152,8 +156,8 @@ def candlesticks_cmd(symbol, period, count, output_json):
     示例：longbridge candlesticks AAPL.US day --count 30
     """
     try:
-        ctx = QuoteContext(get_config())
-        resp = ctx.candlesticks(symbol, PERIOD_MAP[period], count, AdjustType.NoAdjust)
+        quote_ctx = QuoteContext(get_config(ctx.obj.get("profile")))
+        resp = quote_ctx.candlesticks(symbol, PERIOD_MAP[period], count, AdjustType.NoAdjust)
     except Exception as e:
         print_error(str(e))
 
@@ -190,14 +194,15 @@ def candlesticks_cmd(symbol, period, count, output_json):
 @click.command("info")
 @click.argument("symbols", nargs=-1, required=True)
 @click.option("--json", "output_json", is_flag=True, help="以 JSON 格式输出")
-def info_cmd(symbols, output_json):
+@click.pass_context
+def info_cmd(ctx, symbols, output_json):
     """查看标的静态基本信息（名称、交易所、类型等）
 
     示例：longbridge info 700.HK AAPL.US
     """
     try:
-        ctx = QuoteContext(get_config())
-        resp = ctx.static_info(list(symbols))
+        quote_ctx = QuoteContext(get_config(ctx.obj.get("profile")))
+        resp = quote_ctx.static_info(list(symbols))
     except Exception as e:
         print_error(str(e))
 

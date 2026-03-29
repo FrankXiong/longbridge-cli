@@ -8,14 +8,15 @@ from longbridge_cli.formatters import print_table, print_json, print_error
 
 @click.command("balance")
 @click.option("--json", "output_json", is_flag=True, help="以 JSON 格式输出")
-def balance_cmd(output_json):
+@click.pass_context
+def balance_cmd(ctx, output_json):
     """查看账户余额与净资产
 
     示例：longbridge balance
     """
     try:
-        ctx = TradeContext(get_config())
-        resp = ctx.account_balance()
+        trade_ctx = TradeContext(get_config(ctx.obj.get("profile")))
+        resp = trade_ctx.account_balance()
     except Exception as e:
         print_error(str(e))
 
@@ -53,14 +54,15 @@ def balance_cmd(output_json):
 
 @click.command("positions")
 @click.option("--json", "output_json", is_flag=True, help="以 JSON 格式输出")
-def positions_cmd(output_json):
+@click.pass_context
+def positions_cmd(ctx, output_json):
     """查看股票持仓
 
     示例：longbridge positions
     """
     try:
-        ctx = TradeContext(get_config())
-        resp = ctx.stock_positions()
+        trade_ctx = TradeContext(get_config(ctx.obj.get("profile")))
+        resp = trade_ctx.stock_positions()
     except Exception as e:
         print_error(str(e))
 
@@ -101,14 +103,15 @@ def positions_cmd(output_json):
 
 @click.command("funds")
 @click.option("--json", "output_json", is_flag=True, help="以 JSON 格式输出")
-def funds_cmd(output_json):
+@click.pass_context
+def funds_cmd(ctx, output_json):
     """查看基金持仓
 
     示例：longbridge funds
     """
     try:
-        ctx = TradeContext(get_config())
-        resp = ctx.fund_positions()
+        trade_ctx = TradeContext(get_config(ctx.obj.get("profile")))
+        resp = trade_ctx.fund_positions()
     except Exception as e:
         print_error(str(e))
 

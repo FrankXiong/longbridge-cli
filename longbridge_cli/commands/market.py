@@ -16,7 +16,8 @@ MARKET_MAP = {
 @click.command("temperature")
 @click.argument("market", type=click.Choice(["US", "HK", "CN", "SG"]))
 @click.option("--json", "output_json", is_flag=True, help="以 JSON 格式输出")
-def temperature_cmd(market, output_json):
+@click.pass_context
+def temperature_cmd(ctx, market, output_json):
     """查看市场温度
 
     MARKET 可选：US HK CN SG
@@ -24,8 +25,8 @@ def temperature_cmd(market, output_json):
     示例：longbridge temperature US
     """
     try:
-        ctx = QuoteContext(get_config())
-        resp = ctx.market_temperature(MARKET_MAP[market])
+        quote_ctx = QuoteContext(get_config(ctx.obj.get("profile")))
+        resp = quote_ctx.market_temperature(MARKET_MAP[market])
     except Exception as e:
         print_error(str(e))
 
@@ -51,14 +52,15 @@ def temperature_cmd(market, output_json):
 @click.command("capital-flow")
 @click.argument("symbol")
 @click.option("--json", "output_json", is_flag=True, help="以 JSON 格式输出")
-def capital_flow_cmd(symbol, output_json):
+@click.pass_context
+def capital_flow_cmd(ctx, symbol, output_json):
     """查看资金流向
 
     示例：longbridge capital-flow 700.HK
     """
     try:
-        ctx = QuoteContext(get_config())
-        resp = ctx.capital_flow(symbol)
+        quote_ctx = QuoteContext(get_config(ctx.obj.get("profile")))
+        resp = quote_ctx.capital_flow(symbol)
     except Exception as e:
         print_error(str(e))
 
@@ -86,14 +88,15 @@ def capital_flow_cmd(symbol, output_json):
 @click.command("capital-dist")
 @click.argument("symbol")
 @click.option("--json", "output_json", is_flag=True, help="以 JSON 格式输出")
-def capital_dist_cmd(symbol, output_json):
+@click.pass_context
+def capital_dist_cmd(ctx, symbol, output_json):
     """查看资金分布
 
     示例：longbridge capital-dist 700.HK
     """
     try:
-        ctx = QuoteContext(get_config())
-        resp = ctx.capital_distribution(symbol)
+        quote_ctx = QuoteContext(get_config(ctx.obj.get("profile")))
+        resp = quote_ctx.capital_distribution(symbol)
     except Exception as e:
         print_error(str(e))
 
@@ -135,14 +138,15 @@ def capital_dist_cmd(symbol, output_json):
 @click.command("option-chain")
 @click.argument("symbol")
 @click.option("--json", "output_json", is_flag=True, help="以 JSON 格式输出")
-def option_chain_cmd(symbol, output_json):
+@click.pass_context
+def option_chain_cmd(ctx, symbol, output_json):
     """查看期权链到期日列表
 
     示例：longbridge option-chain AAPL.US
     """
     try:
-        ctx = QuoteContext(get_config())
-        resp = ctx.option_chain_expiry_date_list(symbol)
+        quote_ctx = QuoteContext(get_config(ctx.obj.get("profile")))
+        resp = quote_ctx.option_chain_expiry_date_list(symbol)
     except Exception as e:
         print_error(str(e))
 
